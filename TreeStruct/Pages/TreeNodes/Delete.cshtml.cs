@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using TreeStruct.Database;
 using TreeStruct.Models;
+using TreeStruct.Pages.Shared;
 
 namespace TreeStruct.Pages_TreeNodes
 {
@@ -48,13 +49,15 @@ namespace TreeStruct.Pages_TreeNodes
             {
                 return NotFound();
             }
-            var treenode = await _context.TreeNode.FindAsync(id);
+            var treenode = await _context.TreeNode.Include(i => i.children).SingleAsync(p => p.ID == id);
 
             if (treenode != null)
             {
                 TreeNode = treenode;
-                _context.TreeNode.Remove(TreeNode);
+                //_context.TreeNode.Remove(TreeNode);
+                await _Functions.DeleteRecursive(_context, treenode);
                 await _context.SaveChangesAsync();
+                
             }
 
             return RedirectToPage("./Index");
