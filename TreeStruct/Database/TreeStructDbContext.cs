@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace TreeStruct.Data 
+namespace TreeStruct.Database
 {
 	public class TreeStructDbContext : DbContext
 	{

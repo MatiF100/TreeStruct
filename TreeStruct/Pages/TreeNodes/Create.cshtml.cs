@@ -5,16 +5,16 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using TreeStruct.Data;
+using TreeStruct.Database;
 using TreeStruct.Models;
 
 namespace TreeStruct.Pages_TreeNodes
 {
     public class CreateModel : PageModel
     {
-        private readonly TreeStruct.Data.TreeStructDbContext _context;
+        private readonly TreeStruct.Database.TreeStructDbContext _context;
 
-        public CreateModel(TreeStruct.Data.TreeStructDbContext context)
+        public CreateModel(TreeStruct.Database.TreeStructDbContext context)
         {
             _context = context;
         }

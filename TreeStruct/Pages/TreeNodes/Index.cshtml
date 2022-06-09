@@ -1,4 +1,5 @@
 @page
+@using TreeStruct.Models
 @model TreeStruct.Pages_TreeNodes.IndexModel
 
 @{
@@ -19,18 +20,43 @@
             <th></th>
         </tr>
     </thead>
-    <tbody>
-@foreach (var item in Model.TreeNode) {
+    @{
+        @foreach (var rootNode in Model.TreeNode.Where(p => p.TreeNodeID == null))
+        {
+                await ShowTree(rootNode);
+        };
+    }
+</table>
+
+
+@functions{
+    async Task ShowTree(TreeNode node){
+        <tbody>
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.value)
+                @node.value
             </td>
             <td>
-                <a asp-page="./Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.ID">Delete</a>
+                <a asp-page="./Edit" asp-route-id="@node.ID">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@node.ID">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@node.ID">Delete</a>
             </td>
         </tr>
+        @if (node.children.Any())
+        {
+            <tr>
+                <td colspan="2">
+                    <table class="table">
+                        <tbody>
+                            @foreach (var child in node.children)
+                            {
+                                await ShowTree(child);
+                            }
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        }
+        </tbody>
+    }
 }
-    </tbody>
-</table>

@@ -1,4 +1,4 @@
-using TreeStruct.Data;
+using TreeStruct.Database;
 using TreeStruct.Models;
 using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);

@@ -1,4 +1,5 @@
 @page
+@using TreeStruct.Models
 @model TreeStruct.Pages_TreeNodes.EditModel
 
 @{
@@ -7,7 +8,11 @@
 
 <h1>Edit</h1>
 
-<h4>TreeNode</h4>
+@{
+    <h4>
+        @Model.TreeNode.value
+    </h4>
+}
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -15,8 +20,12 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="TreeNode.ID" />
             <div class="form-group">
-                <label asp-for="TreeNode.value" class="control-label"></label>
+                <label asp-for="TreeNode.value" class="control-label">Node's content: </label>
                 <input asp-for="TreeNode.value" class="form-control" />
+                <label asp-for="TreeNode.TreeNodeID" class="form-label">Parent node: </label>
+                <select asp-for="TreeNode.TreeNodeID" asp-items="@Model.NodeList" class="form-control">
+                    <option value="">/</option>
+                </select>
                 <span asp-validation-for="TreeNode.value" class="text-danger"></span>
             </div>
             <div class="form-group">
