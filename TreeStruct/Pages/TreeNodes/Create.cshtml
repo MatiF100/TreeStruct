@@ -14,8 +14,12 @@
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="TreeNode.value" class="control-label"></label>
+                <label asp-for="TreeNode.value" class="control-label">Node name</label>
                 <input asp-for="TreeNode.value" class="form-control" />
+                <label asp-for="TreeNode.TreeNodeID" class="form-label">Parent node:</label>
+                <select asp-for="TreeNode.TreeNodeID" asp-items="@Model.NodeList" class="form-control">
+                    <option value="">/</option>
+                </select>
                 <span asp-validation-for="TreeNode.value" class="text-danger"></span>
             </div>
             <div class="form-group">

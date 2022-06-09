@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TreeStruct.Database;
 using TreeStruct.Models;
+using TreeStruct.Pages.Shared;
 
 namespace TreeStruct.Pages_TreeNodes
 {
@@ -21,11 +22,18 @@ namespace TreeStruct.Pages_TreeNodes
 
         public IActionResult OnGet()
         {
+            var tmpNodeList = _context.TreeNode.ToList();
+            NodeList = tmpNodeList.Select(p => new SelectListItem
+            {
+                Text = _Functions.GetExtendedValue(_context, p),
+                Value = p.ID.ToString()
+            });
             return Page();
         }
 
         [BindProperty]
         public TreeNode TreeNode { get; set; } = default!;
+        public IEnumerable<SelectListItem> NodeList = default!;
         
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
