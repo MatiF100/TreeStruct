@@ -3,7 +3,7 @@
 @model TreeStruct.Pages_TreeNodes.IndexModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Tree structure";
 }
 
 <h1>Index</h1>
@@ -37,9 +37,9 @@
                 @node.value
             </td>
             <td>
-                <a asp-page="./Edit" asp-route-id="@node.ID">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@node.ID">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@node.ID">Delete</a>
+                <a asp-page="./Edit" asp-route-id="@node.ID">Edit node</a> |
+                <a asp-page="./Add" asp-route-id="@node.ID">Add child node</a> |
+                <a asp-page="./Delete" asp-route-id="@node.ID">Delete node</a>
             </td>
         </tr>
         @if (node.children.Any())

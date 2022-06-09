@@ -1,16 +1,17 @@
 @page
-@model TreeStruct.Pages_TreeNodes.CreateModel
+@model TreeStruct.Pages_TreeNodes.AddModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Add";
 }
 
-<h1>Create new node</h1>
+<h1>Add new node</h1>
 
 <div class="row">
     <div class="col-md-4">
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="TreeNode.ID" />
             <div class="form-group">
                 <label asp-for="TreeNode.value" class="control-label">Node name</label>
                 <input asp-for="TreeNode.value" class="form-control" />
@@ -28,7 +29,7 @@
 </div>
 
 <div>
-    <a asp-page="Index">Back to List</a>
+    <a asp-page="./Index">Back to List</a>
 </div>
 
 @section Scripts {
