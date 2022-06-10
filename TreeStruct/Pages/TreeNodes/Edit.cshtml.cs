@@ -15,9 +15,9 @@ namespace TreeStruct.Pages_TreeNodes
 {
     public class EditModel : PageModel
     {
-        private readonly TreeStruct.Database.TreeStructDbContext _context;
+        private readonly TreeStructDbContext _context;
 
-        public EditModel(TreeStruct.Database.TreeStructDbContext context)
+        public EditModel(TreeStructDbContext context)
         {
             _context = context;
         }
@@ -42,7 +42,10 @@ namespace TreeStruct.Pages_TreeNodes
                 return NotFound();
             }
 
-            var tmpNodeList = _context.TreeNode.Where(p => p.ID != treenode.ID).ToList();
+            var tmpNodeList = await GetExtendedChildrenList(
+            _context.TreeNode.Include(p => p.children)
+                    .Where(p => p.ID != treenode.ID && p.TreeNodeID == null).ToList(), treenode.ID
+                );
             NodeList = tmpNodeList.Select(p => new SelectListItem
             {
                 Text = GetExtendedValue(p),
@@ -51,6 +54,26 @@ namespace TreeStruct.Pages_TreeNodes
             
             TreeNode = treenode;
             return Page();
+        }
+
+        private async  Task<List<TreeNode>> GetExtendedChildrenList(IEnumerable<TreeNode> nodes, int nodeId)
+        {
+            var extendedList = new List<TreeNode>();
+            foreach (var node in nodes)
+            {
+                if (node.ID != nodeId)
+                {
+                    extendedList.Add(node);
+                    extendedList.AddRange(
+                        await GetExtendedChildrenList(
+                            _context.TreeNode
+                                .Include(p=> p.children).Single(p => p.ID == node.ID).children, nodeId
+                            )
+                        );
+                }
+            }
+
+            return extendedList;
         }
 
         private string GetExtendedValue(TreeNode node)
