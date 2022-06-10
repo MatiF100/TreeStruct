@@ -2,6 +2,7 @@
 @using TreeStruct.Models
 @using System.Text
 @using Newtonsoft.Json
+@using TreeStruct.Pages_TreeNodes
 @model TreeStruct.Pages_TreeNodes.IndexModel
 
 @{
@@ -27,12 +28,17 @@
                </form>
             </th>
             <th>
+                <form method="post">
+                    <select asp-for="SortOrder" asp-items="Html.GetEnumSelectList<IndexModel.SortOrders>()">
+                    </select>
+                    <input type="submit" value="Apply sorting" />
+                </form>
             </th>
 
         </tr>
     </thead>
     @{
-        @foreach (var rootNode in Model.TreeNode.Where(p => p.TreeNodeID == null))
+        @foreach (var rootNode in await GetSortedList(Model.TreeNode.Where(p => p.TreeNodeID == null)))
         {
                 await ShowTree(rootNode);
         };
@@ -76,6 +82,25 @@
             @(" | ")
         }
     }
+
+    async Task<IOrderedEnumerable<TreeNode>> GetSortedList(IEnumerable<TreeNode> nodes)
+    {
+        var sortOrder = (IndexModel.SortOrders)(HttpContext.Session.GetInt32("SortOrder") ?? (int)IndexModel.SortOrders.AlphAsc);
+        var sortedList = (IndexModel.SortOrders) sortOrder switch
+        {
+            IndexModel.SortOrders.AlphAsc => nodes.OrderBy(p => p.value),
+            IndexModel.SortOrders.AlphDesc => nodes.OrderByDescending(p => p.value),
+            IndexModel.SortOrders.ChildAsc => nodes.OrderBy(p => p.children.Count()),
+            IndexModel.SortOrders.ChildDesc => nodes.OrderByDescending(p => p.children.Count()),
+            IndexModel.SortOrders.IdAsc => nodes.OrderBy(p => p.ID),
+            IndexModel.SortOrders.IdDesc => nodes.OrderByDescending(p => p.ID),
+            IndexModel.SortOrders.LenAsc => nodes.OrderBy(p => p.value.Length),
+            IndexModel.SortOrders.LenDesc => nodes.OrderByDescending(p => p.value.Length),
+            _ => nodes.OrderBy(p => p.ID)
+            };
+
+        return sortedList;
+    } 
     
     async Task ShowTree(TreeNode node){
         <tbody>
@@ -99,10 +124,14 @@
                 <td colspan="2">
                     <table class="table">
                         <tbody>
-                            @foreach (var child in node.children)
-                            {
-                                await ShowTree(child);
-                            }
+                        @{
+                            var sortedList = await GetSortedList(node.children);
+                            
+                        }
+                        @foreach (var child in sortedList)
+                        {
+                            await ShowTree(child);
+                        }
                         </tbody>
                     </table>
                 </td>

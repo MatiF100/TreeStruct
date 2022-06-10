@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,12 +21,34 @@ namespace TreeStruct.Pages_TreeNodes
 
         private readonly TreeStruct.Database.TreeStructDbContext _context;
 
+        public enum SortOrders
+        {
+            [Display(Name="By name, ascending")]
+            AlphAsc,
+            [Display(Name="By name, descending")]
+            AlphDesc,
+            [Display(Name="By length, ascending")]
+            LenAsc,
+            [Display(Name="By length, descending")]
+            LenDesc,
+            [Display(Name="By number of children, ascending")]
+            ChildAsc,
+            [Display(Name="By number of children, descending")]
+            ChildDesc,
+            [Display(Name="By ID, ascending")]
+            IdAsc,
+            [Display(Name="By ID, descending")]
+            IdDesc
+        }
+
         public IndexModel(TreeStruct.Database.TreeStructDbContext context)
         {
             _context = context;
         }
 
+        [BindProperty] public SortOrders SortOrder { get; set; }
         public IList<TreeNode> TreeNode { get;set; } = default!;
+        //var sortOrder = (IndexModel.SortOrders)(HttpContext.Session.GetInt32("SortOrder") ?? (int)IndexModel.SortOrders.AlphAsc);
 
         public async Task OnGetAsync()
         {
@@ -74,17 +97,20 @@ namespace TreeStruct.Pages_TreeNodes
             var foldState = Request.Form["fold"];
             if (foldState == "foldAll")
             {
+                SortOrder = (SortOrders) (HttpContext.Session.GetInt32("SortOrder") ?? 0);
                 HttpContext.Session.Remove("Expand");
                 var foldDict = new Dictionary<int, bool>();
                 foldDict[-1] = false;
                 HttpContext.Session.Set("Expand", Encoding.ASCII.GetBytes(foldDict.ToJson()) );
             }else if (foldState == "expandAll")
             {
+                SortOrder = (SortOrders) (HttpContext.Session.GetInt32("SortOrder") ?? 0);
                 HttpContext.Session.Remove("Expand");
                 var foldDict = new Dictionary<int, bool>();
                 foldDict[-1] = true;
                 HttpContext.Session.Set("Expand", Encoding.ASCII.GetBytes(foldDict.ToJson()) );
             }
+            HttpContext.Session.SetInt32("SortOrder", (int)SortOrder);
 
             TreeNode = await _context.TreeNode.ToListAsync();
             return Page();
