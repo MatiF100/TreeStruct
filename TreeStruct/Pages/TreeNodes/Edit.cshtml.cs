@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +24,9 @@ namespace TreeStruct.Pages_TreeNodes
 
         [BindProperty]
         public TreeNode TreeNode { get; set; } = default!;
-        public IEnumerable<SelectListItem> NodeList = default!;
+        
+        [BindProperty]
+        public IEnumerable<SelectListItem> NodeList { get; set; }= default!;
 
 
         public async Task<IActionResult> OnGetAsync(int? id)
@@ -92,6 +95,10 @@ namespace TreeStruct.Pages_TreeNodes
                 {
                     throw;
                 }
+            }
+            catch (DbUpdateException)
+            {
+                return Page();
             }
 
             return RedirectToPage("./Index");
