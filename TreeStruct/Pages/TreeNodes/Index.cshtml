@@ -1,5 +1,7 @@
 @page
 @using TreeStruct.Models
+@using System.Text
+@using Newtonsoft.Json
 @model TreeStruct.Pages_TreeNodes.IndexModel
 
 @{
@@ -15,9 +17,18 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.TreeNode[0].value)
+                <form method="post">
+                    <input type="hidden" name="fold" value="foldAll" />
+                    <input type="submit" value="Fold All" />
+                </form>
+                <form method="post">
+                   <input type="hidden" name="fold" value="expandAll" />
+                   <input type="submit" value="Expand All" />
+               </form>
             </th>
-            <th></th>
+            <th>
+            </th>
+
         </tr>
     </thead>
     @{
@@ -30,19 +41,59 @@
 
 
 @functions{
+
+    bool IsExtended(TreeNode node)
+    {
+        var foldState = HttpContext.Session.Get("Expand") ?? new byte[0];
+        var foldDict = new Dictionary<int, bool>();
+        if (foldState.Length != 0)
+        {
+            foldDict = JsonConvert.DeserializeObject<Dictionary<int, bool>>(Encoding.ASCII.GetString(foldState)) ?? new Dictionary<int, bool>();
+        }
+        
+        
+
+        bool nodeState = false;
+
+        if (foldDict.TryGetValue(-1, out nodeState))
+        {
+            if (nodeState == true)
+            {
+                return true;
+            }
+        }
+        
+        foldDict.TryGetValue(node.ID, out nodeState);
+
+        return nodeState;
+    }
+
+    async Task RenderCollapseButton(TreeNode node)
+    {
+        if (node.children.Any())
+        {
+            <a asp-page="./Index" asp-route-id="@node.ID" asp-page-handler="fold">@(IsExtended(node) ? "Collapse" : "Expand")</a>
+            @(" | ")
+        }
+    }
+    
     async Task ShowTree(TreeNode node){
         <tbody>
         <tr>
             <td>
-                @node.value
+                @node.value 
+                (
+                @node.children.Count()
+                )
             </td>
             <td>
+                @{await RenderCollapseButton(node);}
                 <a asp-page="./Edit" asp-route-id="@node.ID">Edit node</a> |
                 <a asp-page="./Add" asp-route-id="@node.ID">Add child node</a> |
                 <a asp-page="./Delete" asp-route-id="@node.ID">Delete node</a>
             </td>
         </tr>
-        @if (node.children.Any())
+        @if (node.children.Any() && IsExtended(node))
         {
             <tr>
                 <td colspan="2">

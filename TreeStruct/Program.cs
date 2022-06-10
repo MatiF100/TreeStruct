@@ -4,10 +4,15 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorPages();
+//builder.Services.AddRazorPages(options => options.Conventions.AddPageRoute("/Pages/TreeNodes/Index", ""));
+builder.Services.AddMvc().AddRazorPagesOptions(options => options.Conventions.AddPageRoute("/TreeNodes/Index", ""));
+
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<TreeStructDbContext>(opts => opts.UseNpgsql(connectionString));
+
+builder.Services.AddSession();
+builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 
@@ -28,16 +33,14 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseSession();
 
 app.UseRouting();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}"
-);
 
 app.UseAuthorization();
 
 app.MapRazorPages();
+
 
 app.Run();
