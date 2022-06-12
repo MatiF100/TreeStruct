@@ -9,10 +9,10 @@
     ViewData["Title"] = "Tree structure";
 }
 
-<h1>Index</h1>
+<h1>View the structure</h1>
 
 <p>
-    <a asp-page="Create">Create New</a>
+    <a asp-page="Create">Create new node</a>
 </p>
 <table class="table">
     <thead>
@@ -111,7 +111,7 @@
                 @node.children.Count()
                 )
             </td>
-            <td>
+            <td style="text-align: end">
                 @{await RenderCollapseButton(node);}
                 <a asp-page="./Edit" asp-route-id="@node.ID">Edit node</a> |
                 <a asp-page="./Add" asp-route-id="@node.ID">Add child node</a> |
@@ -121,7 +121,7 @@
         @if (node.children.Any() && IsExtended(node))
         {
             <tr>
-                <td colspan="2">
+                <td colspan="2" style="padding-left: 2em; padding-right: 2em">
                     <table class="table">
                         <tbody>
                         @{

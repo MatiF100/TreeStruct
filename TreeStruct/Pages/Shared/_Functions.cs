@@ -11,6 +11,20 @@ namespace TreeStruct.Pages.Shared;
 
 public class _Functions
 {
+    public static bool IsLooped(TreeStructDbContext ctx, TreeNode node)
+    {
+       var parent = node.TreeNodeID;
+       while (parent != null)
+       {
+           var newParent = ctx.TreeNode.Where(p => p.ID == parent).Single();
+           if (newParent.ID == node.ID)
+               return false;
+           parent = newParent.TreeNodeID;
+       }
+
+       return true;
+
+    }
     public static string GetExtendedValue(TreeStructDbContext ctx, TreeNode node)
     {
         var extendedValue = new StringBuilder();

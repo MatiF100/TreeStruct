@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TreeStruct.Database;
 using TreeStruct.Models;
+using TreeStruct.Pages.Shared;
 
 namespace TreeStruct.Pages_TreeNodes
 {
@@ -97,7 +98,7 @@ namespace TreeStruct.Pages_TreeNodes
         // For more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || _Functions.IsLooped(_context, TreeNode))
             {
                 return Page();
             }

@@ -23,7 +23,7 @@ namespace TreeStruct.Models
 		public List<TreeNode> children {get; set;}= new List<TreeNode>();
 	}
 
-	
+
 	public class SeedExampleData
 	{
 		public static void Initialize(IServiceProvider serviceProvider)
@@ -47,6 +47,12 @@ namespace TreeStruct.Models
 						children = new List<TreeNode>()
 					}
 				);
+				level2.Add(
+					new TreeNode
+					{
+						value = "Friend's photos",
+						children = new List<TreeNode>()
+					});
 
 				List<TreeNode> level1 = new List<TreeNode>();
 				level1.Add(
@@ -70,8 +76,48 @@ namespace TreeStruct.Models
 
 				ctx.TreeNode.AddRange(
 					new TreeNode{
-						value="Root",
+						value="Top level",
 						children = level1
+					}
+				);
+				List<TreeNode> level2b = new List<TreeNode>();
+				level2b.Add(
+					new TreeNode{
+						value = "Origin",
+						children = new List<TreeNode>()
+					}
+				);
+				level2b.Add(
+					new TreeNode
+					{
+						value = "Steam",
+						children = new List<TreeNode>()
+					});
+
+				List<TreeNode> level1b = new List<TreeNode>();
+				level1b.Add(
+					new TreeNode{
+						value = "Games",
+						children = level2b
+					}
+				);
+				level1b.Add(
+					new TreeNode{
+						value = "Programs",
+						children = new List<TreeNode>()
+					}
+				);
+				level1b.Add(
+					new TreeNode{
+						value = "Homework",
+						children = new List<TreeNode>()
+					}
+				);
+
+				ctx.TreeNode.AddRange(
+					new TreeNode{
+						value="Top level 2",
+						children = level1b
 					}
 				);
 				ctx.SaveChanges();
